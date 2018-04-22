@@ -15,11 +15,26 @@ typedef struct player {
 	int type_mise;
 } PLAYER;
 
+typedef struct banque{
+	int nb_players;
+	deck_t *deck;
+	int nb_hand;
+	int *cards;
+	int nb_cards;
+	int tot_cards;
+} BANK;
+
 //Initialise le joueur
 PLAYER init_joueur(PLAYER p1);
+
+//Initialise la banque
+BANK init_bank(BANK b, decktype_t type, int nb_players, int nb_deck, int nb_hand);
 
 //Convertie une idcard en valeur numérique qui sera utile pour le total des cartes du joueur
 int conversion_carte(int idcard);
 
 //Additione la valeur de chaque carte que possède le joueur dans le tableau de ses cartes
 PLAYER total_carte(PLAYER p1);
+
+//Additione la valeur de chaque carte que possède la banque dans le tableau de ses cartes
+BANK total_carte_bank(BANK b);

@@ -15,6 +15,17 @@ PLAYER init_joueur(PLAYER p1){
 	return p1;
 }
 
+BANK init_bank(BANK b, decktype_t type, int nb_players, int nb_deck, int nb_hand){
+	b.nb_players = nb_players;
+	b.deck = (initDeck(type,nb_deck));
+	b.nb_hand = nb_hand;
+	b.cards = malloc (sizeof(int)*17);
+	b.nb_cards = 0;
+	b.tot_cards = 0;
+	shuffleDeck(b.deck);
+	return b;
+}
+
 int conversion_carte(int idcard){
 	int val_card_int;
 	cardvalue_t val_card = getValueFromCardID(idcard);
@@ -44,3 +55,12 @@ PLAYER total_carte(PLAYER p1){
 	}
 	return p1;
 }
+
+BANK total_carte_bank(BANK b){
+	int cpt;
+	for(cpt=0;cpt<b.nb_cards;cpt++){
+		b.tot_cards += conversion_carte(b.cards[cpt]);
+	}
+	return b;
+}
+
