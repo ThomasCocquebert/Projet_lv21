@@ -25,7 +25,7 @@ typedef struct banque{
 } BANK;
 
 //Initialise le joueur
-PLAYER init_joueur(PLAYER p1);
+PLAYER *init_joueur(PLAYER *p1);
 
 //Initialise la banque
 BANK init_bank(BANK b, decktype_t type, int nb_players, int nb_deck, int nb_hand);
@@ -40,7 +40,7 @@ PLAYER total_carte(PLAYER p1);
 BANK total_carte_bank(BANK b);
 
 //libere la mémoire du tableau cards
-void libere_joueur(PLAYER p);
+void libere_joueur(PLAYER *p);
 
 //Libere la mémoire du tableau de carte et du deck
 void libere_bank(BANK b);

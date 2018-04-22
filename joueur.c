@@ -4,14 +4,14 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-PLAYER init_joueur(PLAYER p1){
-	p1.cards = malloc (sizeof(int)*21);
-	p1.nb_cards = 0;
-	p1.tot_cards = 0;
-	p1.jetons = 0;
-	p1.valStop = 0;
-	p1.obj_jetons = 0;
-	p1.type_mise = 0;
+PLAYER *init_joueur(PLAYER *p1){
+	p1->cards = malloc (sizeof(int)*21);
+	p1->nb_cards = 0;
+	p1->tot_cards = 0;
+	p1->jetons = 0;
+	p1->valStop = 0;
+	p1->obj_jetons = 0;
+	p1->type_mise = 0;
 	return p1;
 }
 
@@ -64,8 +64,8 @@ BANK total_carte_bank(BANK b){
 	return b;
 }
 
-void libere_joueur(PLAYER p){
-	free(p.cards);
+void libere_joueur(PLAYER *p){
+	free(p->cards);
 }
 
 void libere_bank(BANK b){

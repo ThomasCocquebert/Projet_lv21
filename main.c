@@ -1,11 +1,12 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <pthread.h>
 #include "deck.h"
 #include "joueur.h"
 
 int main(){
 	//Test des fonctions de joueur.h
-	initDeckLib();
+	/*initDeckLib();
 	decktype_t type = P52;
 	int nb_players = 3;
 	int nb_deck = 8;
@@ -60,6 +61,41 @@ int main(){
 	libere_joueur(p2);
 	libere_joueur(p3);
 	libere_bank(b);
+	*/
+	void *add_joueur(void *arg){
+		printf("thread en cours d'exécution !\n");
+		PLAYER *p = arg;
+		
+		p = init_joueur(p);
+		p->nb_cards += rand()%10+1;
+		p->cards[0] = 42;
+		arg = p;
+		printf("%p\n",&p);
+		//libere_joueur(p);
+		printf("fin du thread\n");
+		return ;
+	}
+	
+	srand (time(NULL));
+	pthread_t tid[5];
+	PLAYER p[5];
+	int i;
+	for(i=0;i<5;i++){
+		pthread_create(&tid[i],NULL,add_joueur,&p[i]);
+	}
+	
+	for(i=0;i<5;i++){
+		pthread_join(tid[i],(void *) &p[i]);
+	}
+	
+	for(i=0;i<5;i++){
+		printf("%p\n",&p[i]);
+	}
+	for(i=0;i<5;i++){
+		//libere_joueur(&p[i]);
+	}
+	//free(p[0].cards);
+	
 	
 	exit(0);
 }
