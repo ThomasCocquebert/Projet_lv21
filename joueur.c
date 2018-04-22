@@ -64,3 +64,11 @@ BANK total_carte_bank(BANK b){
 	return b;
 }
 
+void libere_joueur(PLAYER p){
+	free(p.cards);
+}
+
+void libere_bank(BANK b){
+	removeDeck(b.deck);
+	free(b.cards);
+}

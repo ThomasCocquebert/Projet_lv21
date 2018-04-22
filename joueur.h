@@ -38,3 +38,9 @@ PLAYER total_carte(PLAYER p1);
 
 //Additione la valeur de chaque carte que possède la banque dans le tableau de ses cartes
 BANK total_carte_bank(BANK b);
+
+//libere la mémoire du tableau cards
+void libere_joueur(PLAYER p);
+
+//Libere la mémoire du tableau de carte et du deck
+void libere_bank(BANK b);

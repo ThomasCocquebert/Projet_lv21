@@ -56,5 +56,10 @@ int main(){
 	printf(" ");
 	printf("%d\n",p3.tot_cards);
 	
+	libere_joueur(p1);
+	libere_joueur(p2);
+	libere_joueur(p3);
+	libere_bank(b);
+	
 	exit(0);
 }
