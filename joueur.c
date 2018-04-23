@@ -66,6 +66,7 @@ BANK total_carte_bank(BANK b){
 
 void libere_joueur(PLAYER *p){
 	free(p->cards);
+	free(p);
 }
 
 void libere_bank(BANK b){

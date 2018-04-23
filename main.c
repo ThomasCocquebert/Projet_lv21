@@ -64,24 +64,21 @@ int main(){
 	*/
 	void *add_joueur(void *arg){
 		printf("thread en cours d'exécution !\n");
-		PLAYER *p = arg;
-		
+		PLAYER *p = malloc(sizeof(PLAYER));
 		p = init_joueur(p);
 		p->nb_cards += rand()%10+1;
 		p->cards[0] = 42;
-		arg = p;
-		printf("%p\n",&p);
-		//libere_joueur(p);
+		printf("%p\n\n",p);
 		printf("fin du thread\n");
-		return ;
+		return p;
 	}
 	
 	srand (time(NULL));
 	pthread_t tid[5];
-	PLAYER p[5];
+	PLAYER *p[5];
 	int i;
 	for(i=0;i<5;i++){
-		pthread_create(&tid[i],NULL,add_joueur,&p[i]);
+		pthread_create(&tid[i],NULL,add_joueur,NULL);
 	}
 	
 	for(i=0;i<5;i++){
@@ -89,13 +86,12 @@ int main(){
 	}
 	
 	for(i=0;i<5;i++){
-		printf("%p\n",&p[i]);
+		printf("valeur nb_cards %d\n",p[i]->nb_cards);
+		printf("valeur cards|0] %d\n",p[i]->cards[0]);
+		printf("adresse %p\n\n",p[i]);
 	}
 	for(i=0;i<5;i++){
-		//libere_joueur(&p[i]);
-	}
-	//free(p[0].cards);
-	
-	
+		libere_joueur(p[i]);
+	}	
 	exit(0);
 }
