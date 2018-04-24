@@ -1,6 +1,6 @@
 #include "joueur.h"
 #include "deck.h"
-
+#include <pthread.h>
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -72,4 +72,24 @@ void libere_joueur(PLAYER *p){
 void libere_bank(BANK b){
 	removeDeck(b.deck);
 	free(b.cards);
+}
+
+void libere_mem(int nb_players, PLAYER *p[], pthread_t tid[], BANK b){
+	int i;
+	for(i=0;i<nb_players;i++){
+		libere_joueur(p[i]);
+	}
+	libere_bank(b);
+	free(p);
+	free(tid);
+}
+
+EXDATA *init_data(EXDATA *exdata){
+	exdata->nb_cards = 0;
+	exdata->mise = 0;
+	exdata->gain = 0;
+	exdata->nb_jetons = 0;
+	pthread_mutex_init(&exdata->mut,NULL);
+	pthread_cond_init(&exdata->cond,NULL);
+	return exdata;
 }

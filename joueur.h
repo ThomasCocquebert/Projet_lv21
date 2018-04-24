@@ -1,4 +1,5 @@
 #include "deck.h"
+#include <pthread.h>
 
 /*
 La structure accueillant les informations propres aux joueurs
@@ -24,6 +25,16 @@ typedef struct banque{
 	int tot_cards;
 } BANK;
 
+typedef struct exchange_data{ 
+	int nb_cards;
+	int cards[21];
+	int mise;
+	int gain;
+	int nb_jetons;
+	pthread_mutex_t mut;
+	pthread_cond_t cond;
+} EXDATA;
+
 //Initialise le joueur
 PLAYER *init_joueur(PLAYER *p1);
 
@@ -44,3 +55,9 @@ void libere_joueur(PLAYER *p);
 
 //Libere la mémoire du tableau de carte et du deck
 void libere_bank(BANK b);
+
+//Libere la mémoire de la bank et des joueurs
+void libere_mem(int nb_players, PLAYER *p[], pthread_t tid[], BANK b);
+
+//Init data
+EXDATA *init_data(EXDATA *exdata);
