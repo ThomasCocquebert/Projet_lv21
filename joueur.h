@@ -7,36 +7,48 @@ int *cards renvoie vers un pointeur qui sera un tableau de 21, puisque qu'un jou
 int type_mise sera une indication sur le comportement du joueur
 */
 typedef struct player {
-	int *cards;
+	int cards[21];
 	int nb_cards;
 	int tot_cards;
 	int jetons;
 	int valStop;
 	int obj_jetons;
 	int type_mise;
+	int mise_base;
+	int win;
+	int br;
+	int mise;
 } PLAYER;
 
 typedef struct banque{
 	int nb_players;
 	deck_t *deck;
 	int nb_hand;
-	int *cards;
+	int cards[17];
 	int nb_cards;
 	int tot_cards;
 } BANK;
 
+typedef struct mutex_cond{
+	pthread_mutex_t mut;
+	pthread_cond_t cond;
+	pthread_cond_t cond_player;
+}TMC;
+
 typedef struct exchange_data{ 
 	int nb_cards;
 	int cards[21];
+	int valStop;
 	int mise;
 	int gain;
-	int nb_jetons;
-	pthread_mutex_t mut;
-	pthread_cond_t cond;
+	int jetons;
+	int tot_cards;
+	int win;
+	//TMC *mutcond;
 } EXDATA;
 
 //Initialise le joueur
-PLAYER *init_joueur(PLAYER *p1);
+PLAYER init_joueur(PLAYER p1);
 
 //Initialise la banque
 BANK init_bank(BANK b, decktype_t type, int nb_players, int nb_deck, int nb_hand);
@@ -60,4 +72,8 @@ void libere_bank(BANK b);
 void libere_mem(int nb_players, PLAYER *p[], pthread_t tid[], BANK b);
 
 //Init data
-EXDATA *init_data(EXDATA *exdata);
+EXDATA init_data(EXDATA exdata/*, TMC *mutcond*/);
+
+TMC init_mutex_cond(TMC mutcond);
+
+EXDATA total_carte_data(EXDATA exdata);

@@ -36,10 +36,25 @@ void *player(void *arg){
 	carac_joueur(p);
 	return NULL;
 	*/
-	pthread_t tidcarte;
 	EXDATA *exdata = arg;
-	exdata = init_data(exdata);
-	printf("%d \n",exdata->nb_cards);
+	int i;
+	printf("nb_cards player %d\n",exdata->nb_cards);
+	//pthread_mutex_lock(&exdata->mut);
+	pthread_cond_wait(&exdata->cond,&exdata->mut);
+	printf("Carte n°1: ");
+	printCard(exdata->cards[0]);
+	printf("\n");
+	//pthread_mutex_unlock(&exdata->mut);
+	//exdata->nb_cards = 42;
+	//PLAYER *p = malloc(sizeof(PLAYER));
+	//p = init_joueur(p);
+	//pthread_cond_wait(&exdata->cond,&exdata->mut);
+	//sleep(5);
+	/*for(i=0;i<exdata->nb_cards;i++){
+		printCard(exdata->cards[i]);
+		printf("\n");
+	}
+	*/
 	return NULL;
 }
 
@@ -50,19 +65,43 @@ int main(){
 	int nb_players = 5;
 	int nb_deck = 8;
 	int nb_hand = 40;
-	int i;
+	int i,j;
 	BANK b = init_bank(b,type,nb_players,nb_deck,nb_hand);
 	pthread_t *tid = NULL;
 	tid = malloc(nb_players*sizeof(pthread_t));
 	EXDATA *exdata = NULL;
 	exdata = malloc(nb_players*sizeof(EXDATA));
+	/*
 	for(i=0;i<nb_players;i++){
+		init_data(&exdata[0]);
 		pthread_create(&tid[i],NULL,player,&exdata[i]);
+	}
+	for(j=0;i<2;j++){
+		b.cards[b.nb_cards] = drawCard(b.deck);
+		b.nb_cards++;
+		for(i=0;i<nb_players;i++){
+			//pthread_cond_wait(exdata[i]->cond);
+			exdata[i].cards[exdata[i].nb_cards] = drawCard(b.deck);
+			exdata[i].nb_cards++;
+			//pthread_cond_signal(&exdata[i].cond);
+		}
 	}
 	for(i=0;i<nb_players;i++){
 		pthread_join(tid[i],NULL);
 	}
+	*/
+	init_data(&exdata[0]);
+	printf("nb_cards thp %d\n",exdata[0].nb_cards);
+	pthread_create(&tid[0],NULL,player,&exdata[0]);
+	pthread_mutex_lock(&exdata[0].mut);
+	exdata[0].cards[0] = drawCard(b.deck);
+	pthread_cond_signal(&exdata[0].cond);
+	pthread_mutex_unlock(&exdata[0].mut);
 	
+	pthread_join(tid[0],NULL);
+	//for(i=0;i<nb_players;i++){
+	//	printf("%d\n",exdata[i].nb_cards);
+	//}
 	
 	//Test avec les joueurs dans le threads principal
 	/*

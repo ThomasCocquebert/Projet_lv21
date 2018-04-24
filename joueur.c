@@ -4,14 +4,17 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-PLAYER *init_joueur(PLAYER *p1){
-	p1->cards = malloc (sizeof(int)*21);
-	p1->nb_cards = 0;
-	p1->tot_cards = 0;
-	p1->jetons = 0;
-	p1->valStop = 0;
-	p1->obj_jetons = 0;
-	p1->type_mise = 0;
+PLAYER init_joueur(PLAYER p1){
+	//p1->cards = malloc (sizeof(int)*21);
+	p1.nb_cards = 0;
+	p1.tot_cards = 0;
+	p1.jetons = 0;
+	p1.valStop = 0;
+	p1.obj_jetons = 0;
+	p1.mise = 0;
+	p1.type_mise = 0;
+	p1.win = 1;
+	p1.br = 1;
 	return p1;
 }
 
@@ -19,7 +22,7 @@ BANK init_bank(BANK b, decktype_t type, int nb_players, int nb_deck, int nb_hand
 	b.nb_players = nb_players;
 	b.deck = (initDeck(type,nb_deck));
 	b.nb_hand = nb_hand;
-	b.cards = malloc (sizeof(int)*17);
+	//b.cards = malloc (sizeof(int)*17);
 	b.nb_cards = 0;
 	b.tot_cards = 0;
 	shuffleDeck(b.deck);
@@ -71,7 +74,7 @@ void libere_joueur(PLAYER *p){
 
 void libere_bank(BANK b){
 	removeDeck(b.deck);
-	free(b.cards);
+	//free(b.cards);
 }
 
 void libere_mem(int nb_players, PLAYER *p[], pthread_t tid[], BANK b){
@@ -84,12 +87,22 @@ void libere_mem(int nb_players, PLAYER *p[], pthread_t tid[], BANK b){
 	free(tid);
 }
 
-EXDATA *init_data(EXDATA *exdata){
-	exdata->nb_cards = 0;
-	exdata->mise = 0;
-	exdata->gain = 0;
-	exdata->nb_jetons = 0;
-	pthread_mutex_init(&exdata->mut,NULL);
-	pthread_cond_init(&exdata->cond,NULL);
+EXDATA init_data(EXDATA exdata/*, TMC *mutcond*/){
+	exdata.nb_cards = 0;
+	exdata.mise = 0;
+	exdata.gain = 0;
+	exdata.jetons = 0;
+	exdata.valStop = 0;
+	exdata.tot_cards = 0;
+	exdata.win = 0;
+	//exdata.mutcond = mutcond;
+	return exdata;
+}
+
+EXDATA total_carte_data(EXDATA exdata){
+	int cpt;
+	for(cpt=0;cpt<exdata.nb_cards;cpt++){
+		exdata.tot_cards += conversion_carte(exdata.cards[cpt]);
+	}
 	return exdata;
 }

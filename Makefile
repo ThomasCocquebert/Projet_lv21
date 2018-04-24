@@ -24,3 +24,14 @@ oldmain.o: deck.h joueur.h old_main.c
 
 oldversion:	deck.o joueur.o old_main.o
 	gcc deck.o joueur.o old_main.o -Wall -g -lpthread -o oldversion
+	
+newmain.o:	deck.o joueur.o newmain.c
+	gcc -Wall -g -c newmain.c -lpthread
+
+newmain:	deck.o joueur.o newmain.o
+	gcc deck.o joueur.o newmain.o -Wall -g -o newmain -lpthread
+	
+run_newmain:	
+	./newmain
+mem_run_newmain:
+	valgrind ./newmain
