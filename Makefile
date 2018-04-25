@@ -27,6 +27,7 @@ oldversion:	deck.o joueur.o old_main.o
 	
 newmain.o:	deck.o joueur.o newmain.c
 	gcc -Wall -g -c newmain.c -lpthread
+	
 
 newmain:	deck.o joueur.o newmain.o
 	gcc deck.o joueur.o newmain.o -Wall -g -o newmain -lpthread

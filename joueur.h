@@ -29,12 +29,6 @@ typedef struct banque{
 	int tot_cards;
 } BANK;
 
-typedef struct mutex_cond{
-	pthread_mutex_t mut;
-	pthread_cond_t cond;
-	pthread_cond_t cond_player;
-}TMC;
-
 typedef struct exchange_data{ 
 	int nb_cards;
 	int cards[21];
@@ -47,7 +41,7 @@ typedef struct exchange_data{
 	int maxhand;
 	int br;
 	int obj_jetons;
-	//TMC *mutcond;
+	int init_hand;
 } EXDATA;
 
 //Initialise le joueur
@@ -75,8 +69,46 @@ void libere_bank(BANK b);
 void libere_mem(int nb_players, PLAYER *p[], pthread_t tid[], BANK b);
 
 //Init data
-EXDATA init_data(EXDATA exdata/*, TMC *mutcond*/);
-
-TMC init_mutex_cond(TMC mutcond);
+EXDATA init_data(EXDATA exdata);
 
 EXDATA total_carte_data(EXDATA exdata);
+
+PLAYER init_ex(PLAYER p);
+
+void copie_start_data(EXDATA * d, PLAYER p);
+
+void pioche_initiale(BANK * b, EXDATA * d);
+
+void transfert_pioche_initiale(PLAYER * p, EXDATA * d);
+
+void total_card_data(EXDATA * d);
+
+void add_card_data(EXDATA * d, BANK * b);
+
+void transfert_data_newcarte(EXDATA * d, PLAYER * p);
+
+BANK pioche_carte_b(BANK b);
+
+void gain_j(BANK b, EXDATA * d);
+
+void maj_gain(PLAYER * p, EXDATA * d);
+
+void afficher_j(PLAYER p);
+
+void afficher_b(BANK b);
+
+void afficher_d(EXDATA d);
+
+void afficher_carte_d(EXDATA d);
+
+void afficher_carte_b(BANK b);
+
+void afficher_msg(EXDATA d, BANK b);
+
+PLAYER clean_j(PLAYER p);
+
+void clean_d(EXDATA * d);
+
+BANK clean_b(BANK b);
+
+int test_maxhand(int cpthand, int hand);
