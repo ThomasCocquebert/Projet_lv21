@@ -44,6 +44,9 @@ typedef struct exchange_data{
 	int jetons;
 	int tot_cards;
 	int win;
+	int maxhand;
+	int br;
+	int obj_jetons;
 	//TMC *mutcond;
 } EXDATA;
 

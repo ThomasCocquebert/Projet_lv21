@@ -35,3 +35,7 @@ run_newmain:
 	./newmain
 mem_run_newmain:
 	valgrind ./newmain
+	
+indent: joueur.c newmain.c
+	indent -linux joueur.c
+	indent -linux newmain.c
