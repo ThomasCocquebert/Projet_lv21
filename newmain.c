@@ -16,9 +16,8 @@ pthread_cond_t transfert_gain = PTHREAD_COND_INITIALIZER;
 void *jouer(void *arg)
 {
 	EXDATA *d = arg;
-	PLAYER p = init_ex(p);
+	PLAYER p = init_joueur(p);
 	copie_start_data(d,&p);
-	afficher_j(p);
 
 	while (d->maxhand == 0 && d->br == 0 && (d->jetons < d->obj_jetons)) {
 		pthread_mutex_lock(&mut);
@@ -78,19 +77,17 @@ int main()
 		}
 		pthread_cond_wait(&fin_copie_pioche, &mut);
 		{
-			total_card_data(&d);
+			d = total_card_data(d);
 			while (d.tot_cards < d.valStop) {
 				d.cards[d.nb_cards] = drawCard(b.deck);
-				printf("%d\n",d.cards[d.nb_cards]);
 				if(d.cards[d.nb_cards] == -1){
 					removeDeck(b.deck);
 					b.deck = initDeck(P52,b.nb_deck);
 					shuffleDeck(b.deck);
 					d.cards[d.nb_cards] = drawCard(b.deck);
-					printf("%d\n",d.cards[d.nb_cards]);
 				}
 				d.nb_cards++;
-				total_card_data(&d);
+				d = total_card_data(d);
 			}
 
 			pthread_cond_signal(&fin_carte_sup);

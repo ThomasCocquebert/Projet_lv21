@@ -8,12 +8,12 @@ newmain.o:	deck.o joueur.o newmain.c
 	gcc -Wall -g -c newmain.c -lpthread
 	
 
-newmain:	deck.o joueur.o newmain.o
-	gcc deck.o joueur.o newmain.o -Wall -g -o newmain -lpthread
+lv21:	deck.o joueur.o newmain.o
+	gcc deck.o joueur.o newmain.o -Wall -g -o lv21 -lpthread
 	
-run_newmain:	
+run_lv21:	
 	./newmain
-mem_run_newmain:
+mem_run_lv21:
 	valgrind ./newmain
 	
 clean:
