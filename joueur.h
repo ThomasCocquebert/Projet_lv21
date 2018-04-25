@@ -27,6 +27,7 @@ typedef struct banque{
 	int cards[17];
 	int nb_cards;
 	int tot_cards;
+	int nb_deck;
 } BANK;
 
 typedef struct exchange_data{ 
@@ -41,7 +42,8 @@ typedef struct exchange_data{
 	int maxhand;
 	int br;
 	int obj_jetons;
-	int init_hand;
+	int type_mise;
+	int mise_base;
 } EXDATA;
 
 //Initialise le joueur
@@ -69,13 +71,13 @@ void libere_bank(BANK b);
 void libere_mem(int nb_players, PLAYER *p[], pthread_t tid[], BANK b);
 
 //Init data
-EXDATA init_data(EXDATA exdata);
+EXDATA init_data_old(EXDATA exdata);
 
 EXDATA total_carte_data(EXDATA exdata);
 
 PLAYER init_ex(PLAYER p);
 
-void copie_start_data(EXDATA * d, PLAYER p);
+void copie_start_data(EXDATA * d, PLAYER * p);
 
 void pioche_initiale(BANK * b, EXDATA * d);
 
@@ -112,3 +114,7 @@ void clean_d(EXDATA * d);
 BANK clean_b(BANK b);
 
 int test_maxhand(int cpthand, int hand);
+
+EXDATA init_data(EXDATA d, int valStop, int jetons, int obj_jetons, int type_mise, int mise_base);
+
+PLAYER mise_joueur(PLAYER p, EXDATA * d);

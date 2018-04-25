@@ -28,6 +28,7 @@ BANK init_bank(BANK b, decktype_t type, int nb_players, int nb_deck,
 	//b.cards = malloc (sizeof(int)*17);
 	b.nb_cards = 0;
 	b.tot_cards = 0;
+	b.nb_deck = nb_deck;
 	shuffleDeck(b.deck);
 	return b;
 }
@@ -113,7 +114,7 @@ void libere_mem(int nb_players, PLAYER * p[], pthread_t tid[], BANK b)
 	free(tid);
 }
 
-EXDATA init_data(EXDATA exdata )
+EXDATA init_data_old(EXDATA exdata )
 {
 	exdata.nb_cards = 0;
 	exdata.mise = 0;
@@ -125,8 +126,8 @@ EXDATA init_data(EXDATA exdata )
 	exdata.maxhand = 0;
 	exdata.br = 0;
 	exdata.obj_jetons = 0;
-	exdata.init_hand = 0;
-	//exdata.mutcond = mutcond;
+	exdata.type_mise = 0;
+	exdata.mise_base = 0;
 	return exdata;
 }
 
@@ -143,46 +144,28 @@ PLAYER init_ex(PLAYER p)
 {
 	p.nb_cards = 0;
 	p.tot_cards = 0;
-	p.jetons = 10000;
-	p.valStop = 18;
-	p.obj_jetons = 20000;
+	p.jetons = 0;
+	p.valStop = 0;
+	p.obj_jetons = 0;
 	p.type_mise = 0;
-	p.mise_base = 100;
+	p.mise_base = 0;
 	p.win = 0;
 	p.br = 0;
-	p.mise = 100;
+	p.mise = 0;
 	return p;
 }
 
-void copie_start_data(EXDATA * d, PLAYER p)
+void copie_start_data(EXDATA * d, PLAYER * p)
 {
-	d->nb_cards = p.nb_cards;
-	d->tot_cards = p.tot_cards;
-	d->jetons = p.jetons;
-	d->valStop = p.valStop;
-	d->win = p.win;
-	if (p.type_mise == 0)
-		d->mise = p.mise_base;
-	if (p.type_mise == 1) {
-		if (p.win == 1)
-			d->mise = 2 * p.mise;
-		if (p.win == -1)
-			d->mise = p.mise_base;
-		if (p.win == 0)
-			d->mise = p.mise_base;
-	}
-	if (p.type_mise == 2) {
-		if (p.win == 1) {
-			if (d->mise / 2 == 0)
-				d->mise = 1;
-			else
-				d->mise = p.mise / 2;
-		}
-		if (p.win == -1)
-			d->mise = p.mise_base;
-		if (p.win == 0)
-			d->mise = p.mise_base;
-	}
+	p->nb_cards = d->nb_cards;
+	p->tot_cards = d->tot_cards;
+	p->jetons = d->jetons;
+	p->valStop = d->valStop;
+	p->obj_jetons = d->obj_jetons;
+	p->type_mise = d->type_mise;
+	p->mise_base = d->mise_base;
+	p->win= d->win;
+	p->br = d->br;
 }
 
 void pioche_initiale(BANK * b, EXDATA * d)
@@ -193,7 +176,7 @@ void pioche_initiale(BANK * b, EXDATA * d)
 		printf("%d\n",b->cards[i]);
 		if(b->cards[i] == -1){
 			removeDeck(b->deck);
-			b->deck = initDeck(P52,1);
+			b->deck = initDeck(P52,b->nb_deck);
 			shuffleDeck(b->deck);
 			b->cards[i] = drawCard(b->deck);
 			printf("shuffle %d\n",b->cards[i]);
@@ -203,7 +186,7 @@ void pioche_initiale(BANK * b, EXDATA * d)
 		printf("%d\n",d->cards[i]);
 		if(d->cards[i] == -1){
 			removeDeck(b->deck);
-			b->deck = initDeck(P52,1);
+			b->deck = initDeck(P52,b->nb_deck);
 			shuffleDeck(b->deck);
 			d->cards[i] = drawCard(b->deck);
 			printf("shuffle %d\n",d->cards[i]);
@@ -259,7 +242,7 @@ BANK pioche_carte_b(BANK b)
 		printf("%d\n",b.cards[b.nb_cards]);
 		if(b.cards[b.nb_cards] == -1){
 			removeDeck(b.deck);
-			b.deck = initDeck(P52,1);
+			b.deck = initDeck(P52,b.nb_deck);
 			shuffleDeck(b.deck);
 			b.cards[b.nb_cards] = drawCard(b.deck);
 			printf("%d\n",b.cards[b.nb_cards]);
@@ -429,4 +412,35 @@ int test_maxhand(int cpthand, int hand)
 	if (cpthand == hand)
 		return 1;
 	return 0;
+}
+
+EXDATA init_data(EXDATA d, int valStop, int jetons, int obj_jetons, int type_mise, int mise_base){
+	d.nb_cards = 0;
+	d.valStop = valStop;
+	d.mise = 0;
+	d.gain = 0;
+	d.jetons = jetons;
+	d.tot_cards = 0;
+	d.win = 0;
+	d.maxhand = 0;
+	d.br = 0;
+	d.obj_jetons = obj_jetons;
+	d.type_mise = type_mise;
+	d.mise_base = mise_base;
+	return d;
+}
+
+PLAYER mise_joueur(PLAYER p, EXDATA * d){
+	if(p.win == 0) p.mise = p.mise_base;
+	if(p.win == -1){
+		if(p.type_mise == 0) p.mise = p.mise_base;
+		if(p.type_mise == 1) p.mise = 2*p.mise;
+		if(p.type_mise == 2){
+			if(p.mise/2 == 0) p.mise = 1;
+			else p.mise = p.mise/2;
+		}
+	}
+	if(p.win == 1) p.mise = p.mise_base;
+	d->mise = p.mise;
+	return p;
 }

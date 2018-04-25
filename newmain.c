@@ -17,7 +17,8 @@ void *jouer(void *arg)
 {
 	EXDATA *d = arg;
 	PLAYER p = init_ex(p);
-	copie_start_data(d, p);
+	copie_start_data(d,&p);
+	afficher_j(p);
 
 	while (d->maxhand == 0 && d->br == 0 && (d->jetons < d->obj_jetons)) {
 		pthread_mutex_lock(&mut);
@@ -26,6 +27,7 @@ void *jouer(void *arg)
 		pthread_cond_wait(&fin_pioche, &mut);
 		{
 			transfert_pioche_initiale(&p, d);
+			p = mise_joueur(p,d);
 			pthread_cond_signal(&fin_copie_pioche);
 		}
 		pthread_cond_wait(&fin_carte_sup, &mut);
@@ -40,7 +42,6 @@ void *jouer(void *arg)
 			maj_gain(&p, d);
 			p = clean_j(p);
 			clean_d(d);
-			d->init_hand = 1;
 		}
 		pthread_mutex_unlock(&mut);
 	}
@@ -51,10 +52,16 @@ void *jouer(void *arg)
 int main()
 {
 	srand(time(NULL));
-	BANK b = init_bank(b, P52, 1, 1, 100);
-	EXDATA d = init_data(d);
-	d.jetons = 10000;
-	d.obj_jetons = 20000;
+	int valStop = 18;
+	int jetons = 1000;
+	int obj_jetons = 2000;
+	int type_mise = 0;
+	int mise_base = 100;
+	int nb_deck = 1;
+	int nb_players = 1;
+	int nb_hand = 100;
+	BANK b = init_bank(b, P52, nb_players, nb_deck, nb_hand);
+	EXDATA d = init_data(d,valStop,jetons,obj_jetons,type_mise,mise_base);
 	pthread_t joueur;
 	int cpthand = 0;
 
@@ -72,12 +79,12 @@ int main()
 		pthread_cond_wait(&fin_copie_pioche, &mut);
 		{
 			total_card_data(&d);
-			if (d.tot_cards < d.valStop) {
+			while (d.tot_cards < d.valStop) {
 				d.cards[d.nb_cards] = drawCard(b.deck);
 				printf("%d\n",d.cards[d.nb_cards]);
 				if(d.cards[d.nb_cards] == -1){
 					removeDeck(b.deck);
-					b.deck = initDeck(P52,1);
+					b.deck = initDeck(P52,b.nb_deck);
 					shuffleDeck(b.deck);
 					d.cards[d.nb_cards] = drawCard(b.deck);
 					printf("%d\n",d.cards[d.nb_cards]);
